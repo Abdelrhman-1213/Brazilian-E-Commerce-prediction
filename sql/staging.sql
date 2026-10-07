@@ -7,7 +7,7 @@ SELECT
     CAST(order_estimated_delivery_date AS TIMESTAMP) AS estimated_delivery_timestamp,
    (DATE_DIFF('second', CAST(order_purchase_timestamp AS TIMESTAMP),
     CAST(order_delivered_customer_date AS TIMESTAMP))/86400) AS delivery_time
-FROM read_csv_auto('data/archive/olist_orders_dataset.csv')
+FROM read_csv_auto('data/raw/olist_orders_dataset.csv')
 WHERE  order_status='delivered'
 AND 
 order_delivered_customer_date IS NOT NULL ;
@@ -21,7 +21,7 @@ SELECT
     SUM(freight_value) AS total_freight,
     COUNT(DISTINCT seller_id) AS n_sellers,
     ANY_VALUE(seller_id) AS seller_id
-FROM read_csv_auto('data/archive/olist_order_items_dataset.csv')
+FROM read_csv_auto('data/raw/olist_order_items_dataset.csv')
 GROUP BY order_id;
 
 
@@ -33,7 +33,7 @@ SELECT
     seller_zip_code_prefix,
     seller_city,
     seller_state
-FROM read_csv_auto('data/archive/olist_sellers_dataset.csv');
+FROM read_csv_auto('data/raw/olist_sellers_dataset.csv');
 
 CREATE OR REPLACE TABLE stg_customers AS
 SELECT
@@ -41,7 +41,7 @@ SELECT
     customer_zip_code_prefix,
     customer_city,
     customer_state
-FROM read_csv_auto('data/archive/olist_customers_dataset.csv');
+FROM read_csv_auto('data/raw/olist_customers_dataset.csv');
 
 -- One row per zip prefix (raw file has many lat/lng rows per prefix ) 
 CREATE OR REPLACE TABLE stg_geolocation AS
@@ -49,7 +49,7 @@ SELECT
     geolocation_zip_code_prefix,
     AVG(geolocation_lat) AS geolocation_lat,
     AVG(geolocation_lng) AS geolocation_lng
-FROM read_csv_auto('data/archive/olist_geolocation_dataset.csv')
+FROM read_csv_auto('data/raw/olist_geolocation_dataset.csv')
 GROUP BY geolocation_zip_code_prefix;
 
 
